@@ -1,13 +1,10 @@
 <?php
 
 return [
-    'defaults'      => [
-        'wrapper_class'       => 'form-group',
-        'wrapper_error_class' => 'has-error',
-        'label_class'         => 'control-label',
-        'field_class'         => 'form-control',
-        'error_class'         => 'text-danger'
-    ],
+
+    'theme'         => 'bootstrap',
+    //'theme'         => 'semantic-ui'
+
     // Templates
     'form'          => 'laravel-form-builder::form',
     'text'          => 'laravel-form-builder::text',
@@ -23,4 +20,5 @@ return [
     'custom_fields' => [
 //        'datetime' => 'App\Forms\Fields\Datetime'
     ]
+
 ];

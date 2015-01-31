@@ -28,6 +28,7 @@ class FormBuilderServiceProvider extends ServiceProvider
         });
     }
 
+
     protected function registerFormHelper()
     {
         $this->app->bindShared('laravel-form-helper', function ($app) {
@@ -112,11 +113,60 @@ class FormBuilderServiceProvider extends ServiceProvider
         {
             // User has their own config, let's merge them properly
             $userConfig = $this->app['files']->getRequire($userConfigPath);
-            $config = array_replace_recursive($config, $userConfig);
+
+            $config = array_replace_recursive($config, $this->loadThemeConfig($userConfig));
         }
+
 
         // Set each of the items like ->package() previously did
         $this->app['config']->set('laravel-form-builder::config', $config);
-        $this->loadViewsFrom('laravel-form-builder', __DIR__ . '/../../views');
+
+        // Load the theme helper
+        $this->loadThemeHelper($config['theme']);
+
+        // Load the theme views
+        $this->loadViewsFrom('laravel-form-builder', __DIR__.'/../../themes/'.$config['theme'].'/views');
+        
     }
+
+    /**
+    *
+    * Load the config defaults for the theme
+    *
+    * @return array
+    *
+    */
+
+    protected function loadThemeConfig($config)
+    {
+        // set theme to default if the user did not change it
+        if(!isset($config['theme'])) $config['theme'] = 'bootstrap';
+
+        // set theme path based on config
+        $themePath = __DIR__ . '/../../themes/'.$theme.'/config.php';
+
+        // load theme defaults into config array
+        $config['defaults'] = $this->app['files']->getRequire($themePath);
+
+        return $config;
+    }
+
+
+    /**
+    *
+    * Load the theme helper file if there is one
+    *
+    * @return void
+    *
+    */
+    protected function loadThemeHelper($theme)
+    {
+        $helperPath = __DIR__ . '/../../themes/'.$theme.'/helper.php';
+
+        if($this->app['files']->exists($helperPath))
+        {
+            require $helperPath;
+        }
+    }
+
 }
